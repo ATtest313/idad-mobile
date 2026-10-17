@@ -5,7 +5,7 @@
   "description": "تحضير الدروس وسجل الطلبة والغياب ودرجات الأنشطة والاختبارات والتقارير بمعايير يحددها المدرس",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "./index.html?mobile=9.1",
+  "start_url": "./index.html?mobile=9.2",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
@@ -38,7 +38,7 @@
   "shortcuts": [
     {
       "name": "سجل الطلبة",
-      "url": "./index.html?mobile=9.1#students",
+      "url": "./index.html?mobile=9.2#students",
       "icons": [
         {
           "src": "./icon-192.png",
@@ -48,7 +48,7 @@
     },
     {
       "name": "الاختبارات",
-      "url": "./index.html?mobile=9.1#assessments",
+      "url": "./index.html?mobile=9.2#assessments",
       "icons": [
         {
           "src": "./icon-192.png",

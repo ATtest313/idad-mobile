@@ -15,9 +15,9 @@
 @media(max-width:810px){.distribution{grid-template-columns:1fr 1fr}.dist-intro{grid-column:1/-1}.dist-piece b{font-size:18px}.stage-row .field{min-width:120px}}
 
 /* IDAD Mobile 9 — touch and safe-area design */
-:root{--touch:46px;--mobile-bottom:80px}html{scroll-padding-top:80px;-webkit-text-size-adjust:100%}body{overscroll-behavior-y:contain}button,select,input,textarea{-webkit-tap-highlight-color:transparent}textarea{max-width:100%}.table-wrap{overscroll-behavior-x:contain;scrollbar-width:thin}.mobile-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-tile{border:1px solid #dde5f5;background:#fff;border-radius:19px;padding:20px 13px;min-height:138px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:right;box-shadow:0 6px 18px #18284b08}.tool-tile .tile-icon{width:41px;height:41px;border-radius:12px;display:grid;place-items:center;background:#f0f2ff;color:#3e59b9;font-size:23px}.tool-tile strong{font-size:14px}.tool-tile small{color:#74819a;line-height:1.5;font-size:11px}.install-guide{margin-top:12px;background:#f4f6fd;color:#435574;line-height:2;border-radius:12px;padding:14px;font-size:12px}.small-print{color:#8994a8;text-align:center;font-size:11px;margin:20px 0}.bottom-nav button span:last-child{white-space:nowrap}
+:root{--touch:46px;--mobile-bottom:80px}html{scroll-padding-top:80px;-webkit-text-size-adjust:100%}body{overscroll-behavior-y:auto}button,select,input,textarea{-webkit-tap-highlight-color:transparent}textarea{max-width:100%}.table-wrap{overscroll-behavior-x:contain;scrollbar-width:thin}.mobile-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tool-tile{border:1px solid #dde5f5;background:#fff;border-radius:19px;padding:20px 13px;min-height:138px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:right;box-shadow:0 6px 18px #18284b08}.tool-tile .tile-icon{width:41px;height:41px;border-radius:12px;display:grid;place-items:center;background:#f0f2ff;color:#3e59b9;font-size:23px}.tool-tile strong{font-size:14px}.tool-tile small{color:#74819a;line-height:1.5;font-size:11px}.install-guide{margin-top:12px;background:#f4f6fd;color:#435574;line-height:2;border-radius:12px;padding:14px;font-size:12px}.small-print{color:#8994a8;text-align:center;font-size:11px;margin:20px 0}.bottom-nav button span:last-child{white-space:nowrap}
 @media(max-width:810px){
- html,body{max-width:100%;overflow-x:hidden} .topbar{position:sticky;top:0;z-index:20;padding-top:calc(12px + env(safe-area-inset-top));box-shadow:0 4px 20px #1a2a4f0c;min-height:76px;align-items:center}.main{min-width:0}.content{padding:18px 13px calc(116px + env(safe-area-inset-bottom));}.bottom-nav{padding:7px max(6px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));gap:2px}.bottom-nav button{flex:1;min-width:0;min-height:54px;justify-content:center;border-radius:13px;font-size:10px;gap:3px;padding:5px 2px}.bottom-nav button.active{background:#edf1ff;color:#314fc2}.bottom-nav button .nav-icon{font-size:21px;line-height:1.15}
+ html,body{max-width:100%;overflow-x:clip;overflow-y:visible} .topbar{position:sticky;top:0;z-index:20;padding-top:calc(12px + env(safe-area-inset-top));box-shadow:0 4px 20px #1a2a4f0c;min-height:76px;align-items:center}.main{min-width:0}.content{padding:18px 13px calc(116px + env(safe-area-inset-bottom));}.bottom-nav{padding:7px max(6px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));gap:2px}.bottom-nav button{flex:1;min-width:0;min-height:54px;justify-content:center;border-radius:13px;font-size:10px;gap:3px;padding:5px 2px}.bottom-nav button.active{background:#edf1ff;color:#314fc2}.bottom-nav button .nav-icon{font-size:21px;line-height:1.15}
  .topbar h1{font-size:16px;line-height:1.35}.crumb{min-width:0;flex:1}.top-actions{min-width:0}.class-select select{max-width:118px;min-width:90px;min-height:44px}.class-select span{font-size:9px}.panel{padding:17px 15px;border-radius:19px}.hero{padding:22px 20px;min-height:0;border-radius:21px;margin-bottom:16px}.hero h2{font-size:21px;line-height:1.4}.hero p{font-size:13px;line-height:1.8}.hero .button-row .btn{flex:1;white-space:normal;min-height:44px;text-align:center}
  .button-row>.btn,.action-strip>.btn{min-height:44px;white-space:normal}.field input,.field select,.field textarea,.search,.data-table input,.data-table select{font-size:16px;min-height:46px}.field textarea{min-height:140px}.btn{min-height:44px}.btn.small{min-height:42px}.page-head{gap:10px}.page-head h2{font-size:20px}.page-head .button-row{width:100%;gap:7px}.page-head .button-row .btn{flex:1;font-size:12px}.action-strip>.btn{flex:1}.list-item{flex-wrap:wrap}.list-item .button-row{width:100%;justify-content:flex-end}.list-item .button-row .btn{flex:1}.list-item>.btn{min-height:42px}.data-table th,.data-table td{padding:10px 11px}.data-table{font-size:12px}.data-table td:first-child,.data-table th:first-child{position:sticky;right:0;z-index:2;background:#fff;box-shadow:-4px 0 7px -7px #17244e4b;max-width:145px;white-space:normal;min-width:95px}.data-table th:first-child{background:#f3f6fd;z-index:3}.table-wrap{max-width:100%;-webkit-overflow-scrolling:touch;position:relative}.table-wrap:focus-visible{outline:2px solid #8595ec}.score-cell input{font-size:16px!important;width:90px!important;min-width:80px}.searchbar{flex-direction:column}.searchbar .search{min-width:0}.cal-grid{gap:3px}.cal-head{font-size:9px;padding:5px 0}.cal-day{min-height:53px;padding:6px 4px;border-radius:9px}.cal-day b{font-size:12px}.onboarding .steps{flex-wrap:wrap;line-height:2}.onboarding .hero h2{font-size:22px}.dist-piece{padding:14px 12px}#toast{bottom:calc(85px + env(safe-area-inset-bottom))}.mini-card{padding:12px}.mini-card .fields{grid-template-columns:1fr}.stage-row{flex-direction:column;align-items:stretch}.stage-row .field{width:100%}.stage-row .btn{align-self:stretch}
 }
@@ -29,10 +29,33 @@
 .page-controls .btn[disabled]{opacity:.38;pointer-events:none}
 @media(max-width:810px){
  .page-controls .btn{min-height:46px;min-width:94px}
- .data-table tbody tr{content-visibility:auto;contain-intrinsic-size:auto 54px}
+ .data-table tbody tr{content-visibility:visible;contain-intrinsic-size:none}
  .hero,.panel,.tool-tile{backdrop-filter:none!important}
  .bottom-nav{box-shadow:0 -2px 9px #24304b0a}
  .data-table input,.data-table select{min-height:45px;font-size:16px}
  .search{font-size:16px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* IDAD 9.2: Android vertical scroll stability. The root page is the only vertical scroller.
+   Important: overflow:clip does not create the extra scrolling box that overflow:hidden does. */
+@media (max-width:810px) {
+ html,body{overflow-x:clip!important;overflow-y:visible!important;scroll-behavior:auto!important;overscroll-behavior-y:auto} 
+ .app-frame,.main,.content{overflow-x:clip;overflow-y:visible}
+ .topbar{position:static!important;top:auto!important;box-shadow:none!important}
+ .data-table th{position:static;top:auto}
+ .data-table tbody tr{content-visibility:visible!important;contain-intrinsic-size:none!important}
+ .table-wrap{touch-action:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+ .panel,.tool-tile{box-shadow:none!important}
+ .hero:after{display:none}
+ /* Floating jump controls: outside content; they do not intercept gestures on the page. */
+ .page-jump{display:flex;position:fixed;z-index:25;right:12px;bottom:calc(88px + env(safe-area-inset-bottom));
+  flex-direction:column;gap:6px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s ease}
+ .page-jump.visible{opacity:1;visibility:visible;pointer-events:auto}
+ .page-jump button{display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid #dce3f0;
+  border-radius:14px;color:#314c94;background:#fff;font-size:19px;box-shadow:0 2px 8px #17234418;
+  touch-action:manipulation}
+ .page-jump button:disabled{opacity:.25;pointer-events:none}
+}
+@media (min-width:811px){.page-jump{display:none}}
+@media (prefers-reduced-motion:reduce){.page-jump{transition:none}}
