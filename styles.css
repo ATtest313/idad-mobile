@@ -23,3 +23,16 @@
 }
 @media(max-width:360px){.content{padding-inline:10px}.topbar{padding-inline:9px}.topbar h1{font-size:14px}.bottom-nav button{font-size:9px}.panel{padding:13px}.tool-tile{padding:14px 10px;min-height:126px}.distribution{grid-template-columns:1fr 1fr}}
 @media print{.mobile-tools,.install-guide,.small-print{display:none!important}}
+
+/* Android performance improvements */
+.page-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;padding:16px 3px;color:#56637a;font-size:12px;font-weight:750}
+.page-controls .btn[disabled]{opacity:.38;pointer-events:none}
+@media(max-width:810px){
+ .page-controls .btn{min-height:46px;min-width:94px}
+ .data-table tbody tr{content-visibility:auto;contain-intrinsic-size:auto 54px}
+ .hero,.panel,.tool-tile{backdrop-filter:none!important}
+ .bottom-nav{box-shadow:0 -2px 9px #24304b0a}
+ .data-table input,.data-table select{min-height:45px;font-size:16px}
+ .search{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}

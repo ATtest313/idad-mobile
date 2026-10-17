@@ -70,10 +70,36 @@ export function configErrors(c){const out=[]; if(!c||!Number.isFinite(+c.scale)|
  };
  if((c.annual||[]).some(x=>x.source==='stage'&&!(c.stages||[]).some(t=>t.id===x.stageId)))out.push('مرحلة سنوية مرتبطة بامتحان مستقل غير موجود');
  if(!Array.isArray(c.annual)||!c.annual.length||!c.annual.some(x=>+x.weight>0))out.push('أضف مرحلة سنوية واحدة بوزن موجب');if((c.annual||[]).some(x=>!x.name?.trim()||!Number.isFinite(+x.weight)||+x.weight<0))out.push('اسم المرحلة السنوية أو وزنها غير صالح');return out;}
+// Indexed read paths keep large class rosters responsive. Indices are strictly
+// in-memory and invalidated by the existing mutation functions; no score formulas change.
+const assessmentIndexCache=new WeakMap(),attendanceIndexCache=new WeakMap();
+const emptyAttendance=()=>({absent:0,late:0,excused:0,present:0,total:0});
+function getAttendanceIndex(db){
+ let state=attendanceIndexCache.get(db);
+ if(state?.records===db.attendance)return state.map;
+ const map=new Map();
+ for(const [key,status] of Object.entries(db.attendance||{})){
+  const segments=key.split('|');if(segments.length<3)continue;
+  const id=segments[0]+'|'+segments[1],value=map.get(id)||emptyAttendance();
+  if(Object.hasOwn(value,status)){value[status]++;value.total++;map.set(id,value)}
+ }
+ attendanceIndexCache.set(db,{records:db.attendance,map});return map;
+}
+export function invalidateAttendanceIndex(db){attendanceIndexCache.delete(db)}
 export const classFor=(db,id)=>db.classes.find(c=>c.id===id);
 export const studentsFor=(db,id)=>db.students.filter(s=>s.classId===id);
-export const eventsFor=(db,cid,pid,catid)=>db.assessments.filter(e=>e.classId===cid&&e.periodId===pid&&e.categoryId===catid).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.created||'').localeCompare(b.created||'')||a.id.localeCompare(b.id));
-export function attendanceStats(db,studentId,periodId){let absent=0,late=0,excused=0,present=0;for(const [key,val] of Object.entries(db.attendance||{})){const [sid,pid]=key.split('|');if(sid!==studentId||pid!==periodId)continue;if(val==='absent')absent++;else if(val==='late')late++;else if(val==='excused')excused++;else if(val==='present')present++;}return {absent,late,excused,present,total:absent+late+excused+present}}
+export function eventsFor(db,cid,pid,catid){
+ let state=assessmentIndexCache.get(db);
+ if(!state||state.records!==db.assessments){
+  const map=new Map();
+  for(const ev of db.assessments){const key=ev.classId+'|'+ev.periodId+'|'+ev.categoryId;if(!map.has(key))map.set(key,[]);map.get(key).push(ev)}
+  for(const ev of map.values())ev.sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.created||'').localeCompare(b.created||'')||a.id.localeCompare(b.id));
+  assessmentIndexCache.set(db,state={records:db.assessments,map});
+ }
+ return state.map.get(cid+'|'+pid+'|'+catid)||[];
+}
+
+export function attendanceStats(db,studentId,periodId){const v=getAttendanceIndex(db).get(studentId+'|'+periodId);return v?{...v}:emptyAttendance()}
 export function categoryScore(db,c,studentId,periodId,cat){const {attendance,missing}=c.config;
  if(attendance.mode==='category'&&attendance.categoryId===cat.id){const a=attendanceStats(db,studentId,periodId);if(!a.total)return {value:null,status:'no-events',earned:0,total:0,count:0};const deduction=Math.min(+attendance.cap,+attendance.penalty*(a.absent+a.late*(+attendance.lateFactor||0)));return {value:Math.max(0,+cat.max-deduction),status:'ready',count:a.total,earned:null,total:+cat.max};}
  const ev=eventsFor(db,c.id,periodId,cat.id);
@@ -131,9 +157,22 @@ export function termScore(db,c,sid){return weightedCalc(c.config.periods.map(p=>
 export function annualScore(db,c,sid){const xs=c.config.annual.map(x=>({weight:x.weight,value:x.source==='periods'?termScore(db,c,sid):x.source==='stage'?(()=>{const st=stageFor(c,x.stageId),v=stageScore(db,c,sid,x.stageId).value;return v===null?null:v/(+st.scale)*(+c.config.scale)})():n(db.manual?.[sid]?.[x.id])}));return weightedCalc(xs,c.config.missing,c.config.precision)}
 export function putMark(db,c,eventId,studentId,raw){const ev=db.assessments.find(e=>e.id===eventId&&e.classId===c.id);if(!ev||!db.students.some(s=>s.id===studentId&&s.classId===c.id))throw Error('الطالب أو التقييم غير موجود في هذه الشعبة');const v=validNumber(raw,+ev.max);db.marks[ev.id]??={};if(v===null)delete db.marks[ev.id][studentId];else db.marks[ev.id][studentId]=v;return v;}
 export function putManual(db,c,sid,partId,raw){if(!db.students.some(s=>s.id===sid&&s.classId===c.id))throw Error('طالب غير معروف');const part=c.config.annual.find(x=>x.id===partId&&x.source==='manual');if(!part)throw Error('مرحلة سنوية غير موجودة');const v=validNumber(raw,+c.config.scale);db.manual[sid]??={};if(v===null)delete db.manual[sid][partId];else db.manual[sid][partId]=v;return v;}
-export function putAttendance(db,c,sid,pid,date,status){if(!c.config.periods.some(p=>p.id===pid)||!db.students.some(s=>s.id===sid&&s.classId===c.id)||!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('سجل غياب غير صالح');if(!['present','absent','excused','late',''].includes(status))throw Error('حالة غياب غير صالحة');const key=`${sid}|${pid}|${date}`;if(status)db.attendance[key]=status;else delete db.attendance[key];}
-export function createAssessment(db,c,{periodId,categoryId,title,max,date,role}){if(!c.config.periods.some(x=>x.id===periodId)||!c.config.categories.some(x=>x.id===categoryId)||!title?.trim())throw Error('اختر فترة وعنصر تقييم وعنواناً');const value=+max;if(!Number.isFinite(value)||value<=0||value>10000)throw Error('الدرجة القصوى للاختبار يجب أن تكون أكبر من صفر');const cat=c.config.categories.find(x=>x.id===categoryId);if(cat.method==='practical_pair'&&!['practice','practical_exam'].includes(role))throw Error('حدد: تمارين عملية أم امتحان عملي شهري');const a={id:ID(),classId:c.id,periodId,categoryId,title:title.trim(),max:value,role:cat.method==='practical_pair'?role:'regular',date:date||'',created:new Date().toISOString()};db.assessments.push(a);return a;}
-export function deleteAssessment(db,id){db.assessments=db.assessments.filter(x=>x.id!==id);delete db.marks[id];}
+export function putAttendance(db,c,sid,pid,date,status){
+ if(!c.config.periods.some(p=>p.id===pid)||!db.students.some(s=>s.id===sid&&s.classId===c.id)||!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('سجل غياب غير صالح');
+ if(!['present','absent','excused','late',''].includes(status))throw Error('حالة غياب غير صالحة');
+ const key=`${sid}|${pid}|${date}`,before=db.attendance[key];
+ if(status)db.attendance[key]=status;else delete db.attendance[key];
+ const cache=attendanceIndexCache.get(db);
+ if(cache?.records===db.attendance && before!==status){
+  const sk=sid+'|'+pid,stat=cache.map.get(sk)||emptyAttendance();
+  if(before && Object.hasOwn(stat,before)){stat[before]--;stat.total--}
+  if(status){stat[status]++;stat.total++}
+  if(stat.total)cache.map.set(sk,stat);else cache.map.delete(sk);
+ }
+}
+
+export function createAssessment(db,c,{periodId,categoryId,title,max,date,role}){if(!c.config.periods.some(x=>x.id===periodId)||!c.config.categories.some(x=>x.id===categoryId)||!title?.trim())throw Error('اختر فترة وعنصر تقييم وعنواناً');const value=+max;if(!Number.isFinite(value)||value<=0||value>10000)throw Error('الدرجة القصوى للاختبار يجب أن تكون أكبر من صفر');const cat=c.config.categories.find(x=>x.id===categoryId);if(cat.method==='practical_pair'&&!['practice','practical_exam'].includes(role))throw Error('حدد: تمارين عملية أم امتحان عملي شهري');const a={id:ID(),classId:c.id,periodId,categoryId,title:title.trim(),max:value,role:cat.method==='practical_pair'?role:'regular',date:date||'',created:new Date().toISOString()};db.assessments.push(a);assessmentIndexCache.delete(db);return a;}
+export function deleteAssessment(db,id){db.assessments=db.assessments.filter(x=>x.id!==id);assessmentIndexCache.delete(db);delete db.marks[id];}
 export function changeMax(db,id,newMax,policy='reject'){const a=db.assessments.find(x=>x.id===id);if(!a)throw Error('تقييم غير موجود');const max=+newMax;if(!Number.isFinite(max)||max<=0||max>10000)throw Error('حد أقصى غير صالح');const invalid=Object.entries(db.marks[id]||{}).filter(([,score])=>score>max);if(invalid.length&&policy==='reject')throw Error(`هناك ${invalid.length} درجات تتجاوز الحد الجديد. عدّلها أولاً أو استعمل خيار ضبطها بعد التأكيد.`);if(invalid.length&&policy==='clamp')invalid.forEach(([sid])=>db.marks[id][sid]=max);a.max=max;return invalid.length;}
 export function audit(db){const errors=[];for(const c of db.classes){for(const e of configErrors(c.config))errors.push(`${c.name}: ${e}`)}for(const c of db.classes){for(const st of studentsFor(db,c.id))for(const stage of c.config.stages||[])for(const comp of stage.components){const v=db.stageMarks?.[st.id]?.[stage.id]?.[comp.id];if(v!==undefined&&!within(v,+comp.max))errors.push(`درجة امتحان مستقل خارج الحدود: ${stage.name} / ${st.name}`)}}for(const e of db.assessments){const c=classFor(db,e.classId);if(!c||!c.config.periods.some(p=>p.id===e.periodId)||!c.config.categories.some(a=>a.id===e.categoryId))errors.push(`تقييم غير مرتبط: ${e.title}`);for(const [sid,v] of Object.entries(db.marks[e.id]||{}))if(!db.students.some(s=>s.id===sid&&s.classId===e.classId)||!within(v,+e.max))errors.push(`درجة خارج المدى في ${e.title}`);}return errors;}
 export function normalizeImportedDb(raw){if(!raw||raw.version!==7||!Array.isArray(raw.classes)||!Array.isArray(raw.students)||!Array.isArray(raw.assessments)||!raw.marks||!raw.attendance||!raw.manual)throw Error('صيغة النسخة الاحتياطية غير متوافقة');if(raw.classes.length>1000||raw.students.length>50000||raw.assessments.length>50000)throw Error('حجم السجل يتجاوز الحدود');raw.stageMarks??={};const errors=audit(raw);if(errors.length)throw Error('توجد أخطاء في الملف: '+errors.slice(0,3).join('، '));return raw;}

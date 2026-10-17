@@ -1,19 +1,17 @@
-// IDAD 9.0: offline assets only; student records remain in browser storage.
-const CACHE='idad-mobile-v9-assets';
-const ASSETS=['./','./index.html','./styles.css','./app.mjs','./engine.mjs','./importer.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('idad-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',event=>{
- const req=event.request,u=new URL(req.url);
- if(req.method!=='GET'||u.origin!==self.location.origin)return;
- if(req.mode==='navigate'){
-  event.respondWith(fetch(req).then(response=>response.ok?response:Promise.reject()).catch(()=>caches.match('./index.html')));
+// IDAD 9.1 Android optimization — cache-first app shell; user data stays on device.
+const CACHE='idad-mobile-v9.1-assets';
+const SHELL=['./','./index.html','./styles.css','./app.mjs','./engine.mjs','./importer.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(names=>Promise.all(names.filter(n=>n.startsWith('idad-mobile-')&&n!==CACHE).map(n=>caches.delete(n)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{
+ const r=e.request,u=new URL(r.url);
+ if(r.method!=='GET'||u.origin!==location.origin)return;
+ if(r.mode==='navigate'){
+  e.respondWith(caches.match('./index.html').then(cached=>cached||fetch(r).then(res=>res.ok?res:Promise.reject()).catch(()=>Response.error())));
   return;
  }
- event.respondWith(caches.match(req,{ignoreSearch:true}).then(cached=>cached||fetch(req).then(response=>{
-  if(response.ok&&['script','style','image','manifest'].includes(req.destination)){
-   const copy=response.clone();event.waitUntil(caches.open(CACHE).then(c=>c.put(req,copy)));
-  }
-  return response;
+ e.respondWith(caches.match(r,{ignoreSearch:true}).then(cached=>cached||fetch(r).then(res=>{
+  if(res.ok){const copy=res.clone();e.waitUntil(caches.open(CACHE).then(c=>c.put(r,copy)));}
+  return res;
  })));
 });
