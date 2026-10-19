@@ -1,6 +1,6 @@
-// IDAD 9.2 Android optimization — cache-first app shell; user data stays on device.
-const CACHE='idad-mobile-v9.2-assets';
-const SHELL=['./','./index.html','./styles.css','./app.mjs','./engine.mjs','./importer.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
+// IDAD 9.2 Android optimization — cache-first app shell; private teacher records stored server-side with Row Level Security.
+const CACHE='idad-mobile-v10.0-assets';
+const SHELL=['./','./index.html','./styles-v10.css','./app-v10.mjs','./engine-v10.mjs','./importer-v10.mjs','./cloud.mjs','./cloud-config.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(names=>Promise.all(names.filter(n=>n.startsWith('idad-mobile-')&&n!==CACHE).map(n=>caches.delete(n)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{

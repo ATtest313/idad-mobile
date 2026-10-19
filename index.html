@@ -1,15 +1,33 @@
-<!doctype html><html lang="ar" dir="rtl" data-idad-release="9.2"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#152249"><meta name="color-scheme" content="light"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="إعداد"><meta name="format-detection" content="telephone=no"><meta name="description" content="إعداد — نظام متكامل لتحضير الدروس والتقييمات والغياب والكشوفات بإعدادات مرنة لكل مدرس"><meta name="application-name" content="إعداد"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles.css"><title>إعداد 9.2 | تطبيق المدرس للهاتف</title>
+<!doctype html><html lang="ar" dir="rtl" data-idad-release="10.0"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#152249"><meta name="color-scheme" content="light"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="إعداد"><meta name="format-detection" content="telephone=no"><meta name="description" content="إعداد — نظام متكامل لتحضير الدروس والتقييمات والغياب والكشوفات بإعدادات مرنة لكل مدرس"><meta name="application-name" content="إعداد"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="stylesheet" href="./styles-v10.css"><title>إعداد 10.0 | حساب خاص لكل مدرس</title>
 </head><body>
+<section id="authGate" class="auth-gate" aria-label="دخول المدرسين">
+ <div class="auth-card">
+  <img src="./icon-192.png" alt="شعار إعداد" width="78" height="78">
+  <div class="auth-logo">إعداد <span>10.0</span></div>
+  <h2>مساحتك التعليمية الخاصة</h2>
+  <p class="hint">لكل مدرس حساب وبيانات مستقلة. لا يستطيع مستخدم آخر تصفح سجلاتك دون صلاحية.</p>
+  <div id="authMessage" class="auth-feedback" aria-live="polite"></div>
+  <form id="authForm" data-mode="login">
+   <label class="field"><span>البريد الإلكتروني</span><input id="authEmail" name="email" type="email" autocomplete="email" required placeholder="teacher@example.com"></label>
+   <label class="field"><span>كلمة المرور</span><input name="password" type="password" autocomplete="current-password" required minlength="8"></label>
+   <label class="remember"><input name="remember" type="checkbox"><span>تذكر الدخول على هذا الجهاز الشخصي فقط</span></label>
+   <button class="btn primary auth-submit" id="authSubmit" type="submit">تسجيل الدخول</button>
+  </form>
+  <div class="auth-links"><button id="authToggle" type="button">ليس لديك حساب؟ أنشئ حساباً</button><button id="authForgot" type="button">نسيت كلمة المرور؟</button></div>
+  <div id="passwordReset" hidden><label class="field"><span>كلمة المرور الجديدة</span><input id="resetPassword" type="password" minlength="8"></label><button id="authChangePassword" type="button" class="btn primary">تحديث كلمة المرور</button></div>
+  <small class="auth-footer">يتطلب الاستخدام اتصالاً بالشبكة. سجلات المدرسين لا تُحفظ في التخزين المحلي العام.</small>
+ </div>
+</section>
 <div class="app-frame">
 <aside class="sidebar">
 <a class="brand" href="#dashboard" data-nav="dashboard"><img src="./icon-192.png" alt="شعار إعداد"><span><strong>إعداد</strong><small>مساحة المدرس</small></span></a>
 <div class="nav-title">مساحة العمل</div>
 <nav id="desktopNav" class="nav"></nav>
-<div class="side-bottom"><div class="privacy-note">◈ بياناتك محفوظة على جهازك. لا تُرسل إلى خادم.</div><span class="version">إعداد 9.2 · تطبيق الهاتف</span></div>
+<div class="side-bottom"><div class="privacy-note">◈ بيانات كل مدرس محفوظة في حسابه السحابي الخاص.</div><span class="version">إعداد 10.0 · حسابات منفصلة</span></div>
 </aside>
-<main class="main"><header class="topbar"><div class="crumb"><span class="eyebrow">لوحة المدرس</span><h1 id="pageTitle">مرحباً بك في إعداد</h1></div><div class="top-actions"><label class="class-select"><span>الشعبة النشطة</span><select id="globalClass" aria-label="الشعبة النشطة"></select></label><button class="icon-action" id="quickBackup" title="نسخ احتياطي">⤓</button><button class="btn primary small" data-action="add-lesson">＋ تحضير جديد</button></div></header><div class="content" id="content"></div></main>
+<main class="main"><header class="topbar"><div class="crumb"><span class="eyebrow">لوحة المدرس</span><h1 id="pageTitle">مرحباً بك في إعداد</h1></div><div class="top-actions"><label class="class-select"><span>الشعبة النشطة</span><select id="globalClass" aria-label="الشعبة النشطة"></select></label><button class="icon-action" id="quickBackup" title="نسخ احتياطي">⤓</button><button class="btn primary small" data-action="add-lesson">＋ تحضير جديد</button></div></header><div class="cloud-toolbar"><span>الحساب: <strong id="accountEmail"></strong></span><span id="cloudStatus" data-kind="pending" role="status">جارٍ التحميل…</span><button class="btn small" id="cloudSignOut" type="button">تسجيل الخروج</button></div><div id="cloudBanner" class="cloud-banner" hidden><span data-cloud-message></span><div class="button-row"><button type="button" id="cloudRetry" class="btn small">إعادة المحاولة</button><button type="button" id="cloudBackup" class="btn small">تنزيل JSON</button><button type="button" id="cloudReload" class="btn small">تحميل السحابة</button></div></div><div class="content" id="content"></div></main>
 <nav class="bottom-nav" id="mobileNav" aria-label="التنقل الرئيسي"></nav>
 </div><div class="page-jump" id="pageJump" aria-label="الانتقال داخل الصفحة"><button type="button" id="pageJumpTop" aria-label="الانتقال إلى أعلى الصفحة" title="أعلى الصفحة">↑</button><button type="button" id="pageJumpBottom" aria-label="الانتقال إلى أسفل الصفحة" title="أسفل الصفحة">↓</button></div><div id="toast" role="status" aria-live="polite"></div><input id="importFile" type="file" accept=".xlsx,.xlsm,.csv,.tsv" hidden><input id="restoreFile" type="file" accept=".json" hidden>
-<script type="module" src="./app.mjs"></script>
+<script type="module" src="./app-v10.mjs"></script>
 </body></html>
